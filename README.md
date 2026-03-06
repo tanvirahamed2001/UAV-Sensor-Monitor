@@ -26,7 +26,10 @@ This project simulates the core sensor monitoring loop found in UAV flight contr
 | 📊 **Real-time sensor simulation** | Streams altitude, temperature, battery, and GPS data tick-by-tick |
 | 🔍 **Fault detection engine** | Threshold-based anomaly detection across all sensor channels |
 | 🛡️ **Automated failsafe protocols** | Context-aware responses triggered per fault type |
+| 🧵 **Multi-threaded architecture** | Sensor producer and fault detector run on separate threads with mutex-protected shared queue |
 | 📁 **Telemetry logging** | All sensor readings and fault events written to `telemetry_log.csv` |
+| 📈 **Fault history & statistics** | Tracks fault frequency, timeline, and most critical sensor across the session |
+| ⚙️ **Runtime configuration** | Thresholds loaded from `config.txt` at startup — no recompile needed |
 | 💥 **Injected fault scenarios** | Simulates altitude drop, motor overheat, battery critical, GPS loss, and compound faults |
 
 ---
@@ -46,10 +49,13 @@ This project simulates the core sensor monitoring loop found in UAV flight contr
 
 ```
 UAV-Sensor-Monitor/
-├── main.cpp            # Entry point — real-time monitoring loop
+├── main.cpp            # Entry point — launches producer/consumer threads
 ├── SensorData.h        # Sensor data model + tick-based simulation
 ├── FaultDetector.h     # Fault detection engine + failsafe logic
-└── TelemetryLogger.h   # CSV telemetry logger
+├── TelemetryLogger.h   # CSV telemetry logger
+├── FaultStats.h        # Fault history, frequency tracking, session summary
+├── Config.h            # Runtime config loader from config.txt
+└── config.txt          # Configurable thresholds (edit without recompiling)
 ```
 
 ---
@@ -72,8 +78,8 @@ UAV-Sensor-Monitor/
 ## 🚀 Build & Run
 
 ```bash
-# Compile
-g++ -std=c++11 main.cpp -o uav_monitor
+# Compile (pthread required for multithreading)
+g++ -std=c++11 main.cpp -o uav_monitor -pthread
 
 # Run
 ./uav_monitor
