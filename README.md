@@ -90,26 +90,56 @@ g++ -std=c++11 main.cpp -o uav_monitor -pthread
 ## 🖥️ Sample Output
 
 ```
+[CONFIG] Loaded thresholds from config.txt
+  MIN_ALTITUDE    = 15m
+  MAX_TEMPERATURE = 70C
+  MIN_BATTERY     = 10%
+  TOTAL_TICKS     = 30
+
 ========================================
-   UAV Sensor Monitor v1.0
+   UAV Sensor Monitor v2.0
    Real-Time Fault Detection System
 ========================================
 
-[TICK 0]  ALT: 80m  | TEMP: 27C | BAT: 100% | GPS: OK
-[TICK 8]  ALT: 12m  | TEMP: 25C | BAT: 80%  | GPS: OK
-  *** FAULT DETECTED: CRITICAL ALTITUDE LOW (12m) ***
-  >>> FAILSAFE ENGAGED: EMERGENCY CLIMB INITIATED — ascending to safe altitude
-[TICK 14] ALT: 90m  | TEMP: 78C | BAT: 65%  | GPS: OK
-  *** FAULT DETECTED: MOTOR OVERHEAT (78C) ***
-  >>> FAILSAFE ENGAGED: THROTTLE REDUCED — cooling protocol engaged
-[TICK 20] ALT: 85m  | TEMP: 28C | BAT: 8%   | GPS: OK
-  *** FAULT DETECTED: CRITICAL BATTERY LOW (8%) ***
-  >>> FAILSAFE ENGAGED: RETURN TO HOME — initiating emergency landing sequence
-[TICK 25] ALT: 72m  | TEMP: 26C | BAT: 37%  | GPS: LOST
-  *** FAULT DETECTED: GPS SIGNAL LOST ***
-  >>> FAILSAFE ENGAGED: HOLDING POSITION — switching to inertial navigation
-========================================
+[TICK  0] ALT:    80.0m | TEMP:  27.0C | BAT: 100.0% | GPS: OK
+[TICK  1] ALT:    85.9m | TEMP:  27.6C | BAT:  97.5% | GPS: OK
+...
+[TICK  8] ALT:    12.0m | TEMP:  30.0C | BAT:  80.0% | GPS: OK
+  *** FAULT    : CRITICAL ALTITUDE LOW (12m)
+  >>> FAILSAFE : EMERGENCY CLIMB INITIATED — ascending to safe altitude
+[TICK 14] ALT:    62.6m | TEMP:  78.0C | BAT:  65.0% | GPS: OK
+  *** FAULT    : MOTOR OVERHEAT (78C)
+  >>> FAILSAFE : THROTTLE REDUCED — cooling protocol engaged
+[TICK 20] ALT:    74.4m | TEMP:  24.7C | BAT:   8.0% | GPS: OK
+  *** FAULT    : CRITICAL BATTERY LOW (8%)
+  >>> FAILSAFE : RETURN TO HOME — initiating emergency landing sequence
+[TICK 25] ALT:    98.8m | TEMP:  24.1C | BAT:  37.5% | GPS: LOST
+  *** FAULT    : GPS SIGNAL LOST
+  >>> FAILSAFE : HOLDING POSITION — switching to inertial navigation
+[TICK 28] ALT:     6.0m | TEMP:  25.1C | BAT:  30.0% | GPS: LOST
+  *** FAULT    : CRITICAL ALTITUDE LOW (6m)
+  >>> FAILSAFE : EMERGENCY CLIMB INITIATED — ascending to safe altitude
+
   Mission complete. Log saved to telemetry_log.csv
+
+========================================
+         FLIGHT FAULT SUMMARY
+========================================
+  Total faults detected : 5
+  Most critical sensor  : ALTITUDE
+
+  Fault breakdown:
+    [ALTITUDE] — 2 occurrence(s)
+    [BATTERY]  — 1 occurrence(s)
+    [GPS]      — 1 occurrence(s)
+    [OVERHEAT] — 1 occurrence(s)
+
+  Fault timeline:
+    Tick  8 → CRITICAL ALTITUDE LOW (12m)
+    Tick 14 → MOTOR OVERHEAT (78C)
+    Tick 20 → CRITICAL BATTERY LOW (8%)
+    Tick 25 → GPS SIGNAL LOST
+    Tick 28 → CRITICAL ALTITUDE LOW (6m)
 ========================================
 ```
 
