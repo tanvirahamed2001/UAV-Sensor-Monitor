@@ -32,10 +32,15 @@ public:
 
     std::string mostCriticalSensor() {
         if (faultCount.empty()) return "None";
-        return std::max_element(
-            faultCount.begin(), faultCount.end(),
-            [](const auto& a, const auto& b) { return a.second < b.second; }
-        )->first;
+        std::string worst;
+        int maxCount = 0;
+        for (const std::pair<std::string, int>& p : faultCount) {
+            if (p.second > maxCount) {
+                maxCount = p.second;
+                worst = p.first;
+            }
+        }
+        return worst;
     }
 
     int totalFaults() {
