@@ -10,32 +10,43 @@ private:
     float minBattery;
 
 public:
+    // Initialise thresholds from loaded config
     FaultDetector(const Config& cfg)
         : minAltitude(cfg.minAltitude),
           maxTemperature(cfg.maxTemperature),
           minBattery(cfg.minBattery) {}
 
+    // Check all sensors and return fault description, empty string if all OK
     std::string check(const SensorData& data) {
-        if (data.altitude < minAltitude)
+        if (data.altitude < minAltitude) {
             return "CRITICAL ALTITUDE LOW (" + std::to_string((int)data.altitude) + "m)";
-        if (data.temperature > maxTemperature)
+        }
+        if (data.temperature > maxTemperature) {
             return "MOTOR OVERHEAT (" + std::to_string((int)data.temperature) + "C)";
-        if (data.battery < minBattery)
+        }
+        if (data.battery < minBattery) {
             return "CRITICAL BATTERY LOW (" + std::to_string((int)data.battery) + "%)";
-        if (!data.gpsSignal)
+        }
+        if (!data.gpsSignal) {
             return "GPS SIGNAL LOST";
+        }
         return "";
     }
 
+    // Trigger appropriate failsafe protocol based on fault type
     std::string triggerFailsafe(const std::string& fault) {
-        if (fault.find("ALTITUDE") != std::string::npos)
+        if (fault.find("ALTITUDE") != std::string::npos) {
             return "EMERGENCY CLIMB INITIATED — ascending to safe altitude";
-        if (fault.find("OVERHEAT") != std::string::npos)
+        }
+        if (fault.find("OVERHEAT") != std::string::npos) {
             return "THROTTLE REDUCED — cooling protocol engaged";
-        if (fault.find("BATTERY") != std::string::npos)
+        }
+        if (fault.find("BATTERY") != std::string::npos) {
             return "RETURN TO HOME — initiating emergency landing sequence";
-        if (fault.find("GPS") != std::string::npos)
+        }
+        if (fault.find("GPS") != std::string::npos) {
             return "HOLDING POSITION — switching to inertial navigation";
+        }
         return "GENERAL FAILSAFE — returning to home";
     }
 };
