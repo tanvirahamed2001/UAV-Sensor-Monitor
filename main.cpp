@@ -1,6 +1,7 @@
 #include "SensorData.h"
 #include "FaultDetector.h"
 #include "TelemetryLogger.h"
+#include "FaultStats.h"
 #include "Config.h"
 #include <iostream>
 #include <thread>
@@ -10,9 +11,10 @@ int main() {
     Config config("config.txt");
     FaultDetector detector(config);
     TelemetryLogger logger("telemetry_log.csv");
+    FaultStats stats;
 
     std::cout << "========================================" << std::endl;
-    std::cout << "   UAV Sensor Monitor v1.1" << std::endl;
+    std::cout << "   UAV Sensor Monitor v1.2" << std::endl;
     std::cout << "   Real-Time Fault Detection System" << std::endl;
     std::cout << "========================================" << std::endl;
     std::cout << std::endl;
@@ -31,6 +33,7 @@ int main() {
         if (!fault.empty()) {
             std::cout << "  *** FAULT DETECTED: " << fault << std::endl;
             std::cout << "  >>> FAILSAFE ENGAGED: " << detector.triggerFailsafe(fault) << std::endl;
+            stats.record(tick, fault);
         }
 
         logger.log(tick, data, fault);
@@ -40,6 +43,8 @@ int main() {
     std::cout << "\n========================================" << std::endl;
     std::cout << "  Mission complete. Log saved to telemetry_log.csv" << std::endl;
     std::cout << "========================================" << std::endl;
+
+    stats.printSummary();
 
     return 0;
 }
